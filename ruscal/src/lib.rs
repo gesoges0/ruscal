@@ -85,13 +85,11 @@ pub fn run(config: Config) -> MyResult<()> {
             println!("{:>32}", config.year);
             let months: Vec<_> = (1..=12)
                 .into_iter()
-                .map(|month| {
-                    format_month(config.year, month, false, config.today)
-                })
+                .map(|month| format_month(config.year, month, false, config.today))
                 .collect();
             for (i, chunk) in months.chunks(3).enumerate() {
                 if let [m1, m2, m3] = chunk {
-                    for lines   in izip!(m1, m2, m3) {
+                    for lines in izip!(m1, m2, m3) {
                         println!("{}{}{}", lines.0, lines.1, lines.2);
                     }
                     if i < 3 {
@@ -160,24 +158,16 @@ fn parse_month(month: &str) -> MyResult<u32> {
     }
 }
 
-
-fn format_month(
-    year: i32,
-    month: u32,
-    print_year: bool,
-    today: NaiveDate,
-) -> Vec<String> {
+fn format_month(year: i32, month: u32, print_year: bool, today: NaiveDate) -> Vec<String> {
     let first = NaiveDate::from_ymd(year, month, 1);
-    
+
     // 日曜日から初日までを空白で埋める
     let mut days: Vec<String> = (1..first.weekday().number_from_sunday())
         .into_iter()
         .map(|_| "  ".to_string())
         .collect();
     // 与えられた日が本日か？
-    let is_today = |day: u32| {
-        year == today.year() && month == today.month() && day == today.day()
-    };
+    let is_today = |day: u32| year == today.year() && month == today.month() && day == today.day();
     // 今月の最後の日を取得
     let last = last_day_in_month(year, month);
     // 今月の最初の日から最後の日までをリストに追加
@@ -189,7 +179,7 @@ fn format_month(
             fmt
         }
     }));
-    // 
+    //
     let month_name = MONTH_NAMES[month as usize - 1];
     let mut lines = Vec::with_capacity(8);
     lines.push(format!(
@@ -200,7 +190,7 @@ fn format_month(
             month_name.to_string()
         }
     ));
-    
+
     lines.push("Su Mo Tu We Th Fr Sa  ".to_string());
 
     for week in days.chunks(7) {
@@ -210,7 +200,7 @@ fn format_month(
             width = LINE_WIDTH - 2
         ));
     }
-    
+
     while lines.len() < 8 {
         lines.push(" ".repeat(LINE_WIDTH));
     }
@@ -230,7 +220,7 @@ fn last_day_in_month(year: i32, month: u32) -> NaiveDate {
 
 #[cfg(test)]
 mod tests {
-    use super::{NaiveDate, last_day_in_month, format_month, parse_int, parse_month, parse_year};
+    use super::{format_month, last_day_in_month, parse_int, parse_month, parse_year, NaiveDate};
 
     #[test]
     fn test_parse_int() {
@@ -329,18 +319,8 @@ mod tests {
 
     #[test]
     fn test_last_day_in_month() {
-        assert_eq!(
-            last_day_in_month(2020, 1),
-            NaiveDate::from_ymd(2020, 1, 31)
-        );
-        assert_eq!(
-            last_day_in_month(2020, 2),
-            NaiveDate::from_ymd(2020, 2, 29)
-        );
-        assert_eq!(
-            last_day_in_month(2020, 4),
-            NaiveDate::from_ymd(2020, 4, 30)
-        );
+        assert_eq!(last_day_in_month(2020, 1), NaiveDate::from_ymd(2020, 1, 31));
+        assert_eq!(last_day_in_month(2020, 2), NaiveDate::from_ymd(2020, 2, 29));
+        assert_eq!(last_day_in_month(2020, 4), NaiveDate::from_ymd(2020, 4, 30));
     }
 }
-
