@@ -1,6 +1,6 @@
+use chrono::{Datelike, Local, NaiveDate};
 use clap::{App, Arg};
 use std::error::Error;
-use chrono::{NaiveDate, Datelike, Local};
 use std::str::FromStr;
 
 const MONTH_NAMES: [&str; 12] = [
@@ -45,7 +45,7 @@ pub fn get_args() -> MyResult<Config> {
                 .short("y")
                 .long("year")
                 .help("Show wole current year")
-                .conflicts_with_all(&["month", "year"])
+                .conflicts_with_all(&["month", "year"]),
         )
         .arg(
             Arg::with_name("year")
@@ -95,7 +95,6 @@ fn parse_year(year: &str) -> MyResult<i32> {
         }
     })
 }
-
 
 fn parse_month(month: &str) -> MyResult<u32> {
     // 数値のみの解析
@@ -168,11 +167,17 @@ mod tests {
 
         let res = parse_year("0");
         assert!(res.is_err());
-        assert_eq!(res.unwrap_err().to_string(), "year \"0\" not in the range 1 through 9999");
+        assert_eq!(
+            res.unwrap_err().to_string(),
+            "year \"0\" not in the range 1 through 9999"
+        );
 
         let res = parse_year("10000");
         assert!(res.is_err());
-        assert_eq!(res.unwrap_err().to_string(), "yaer \"10000\" not in the range 1 through 9999");
+        assert_eq!(
+            res.unwrap_err().to_string(),
+            "yaer \"10000\" not in the range 1 through 9999"
+        );
 
         let res = parse_year("foo");
         assert!(res.is_err());
@@ -194,15 +199,20 @@ mod tests {
 
         let res = parse_month("0");
         assert!(res.is_err());
-        assert_eq!(res.unwrap_err().to_string(), "month \"0\" not in the range 1 through 12");
+        assert_eq!(
+            res.unwrap_err().to_string(),
+            "month \"0\" not in the range 1 through 12"
+        );
 
         let res = parse_month("13");
         assert!(res.is_err());
-        assert_eq!(res.unwrap_err().to_string(), "month \"13\" not in the range 1 through 13");
+        assert_eq!(
+            res.unwrap_err().to_string(),
+            "month \"13\" not in the range 1 through 13"
+        );
 
         let res = parse_month("foo");
         assert!(res.is_err());
         assert_eq!(res.unwrap_err().to_string(), "Invalid month \"foo\"");
     }
 }
-
